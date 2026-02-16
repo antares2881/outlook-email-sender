@@ -1,0 +1,21 @@
+{
+  "smtp": {
+    "server": "smtp-mail.outlook.com",
+    "port": 587,
+    "use_tls": true
+  },
+  "email": {
+    "from_name": "Nombre Remitente",
+    "subject": "Asunto del Email"
+  },
+  "settings": {
+    "delay_between_emails": 2,
+    "max_retries": 2,
+    "preview_mode": false
+  },
+  "files": {
+    "excel_path": "data/destinatarios_ejemplo.xlsx",
+    "email_template": "templates/email_template.html",
+    "logo_path": "data/logo.png"
+  }
+}
