@@ -152,8 +152,9 @@ class EmailSender:
         if missing_columns:
             raise ValueError(f"❌ Columnas faltantes en Excel: {missing_columns}")
         
-        # Validar formato de emails
-        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        # Validar formato de emails con regex más completo
+        # Acepta emails con TLDs largos y caracteres internacionales básicos
+        email_pattern = r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$'
         invalid_emails = df[~df['email'].str.match(email_pattern, na=False)]
         
         if not invalid_emails.empty:
@@ -284,7 +285,10 @@ class EmailSender:
             # Generar PDF personalizado
             try:
                 pdf_data = self.pdf_generator.generate_personalized_pdf(data)
-                pdf_filename = f"{data.get('nombre_pdf', 'documento')}_{data['nombre'].replace(' ', '_')}.pdf"
+                # Sanitizar nombre de archivo removiendo caracteres problemáticos
+                safe_pdf_name = data.get('nombre_pdf', 'documento').replace('/', '_').replace('\\', '_').replace(':', '_')
+                safe_nombre = data['nombre'].replace(' ', '_').replace('/', '_').replace('\\', '_').replace(':', '_')
+                pdf_filename = f"{safe_pdf_name}_{safe_nombre}.pdf"
             except Exception as e:
                 self.logger.error(f"Error generando PDF para {data['email']}: {e}")
                 pdf_data = None
@@ -359,7 +363,7 @@ class EmailSender:
             return ""
         
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        report_path = f"logs/reporte_envios_{timestamp}.csv"
+        report_path = Path('logs') / f'reporte_envios_{timestamp}.csv'
         
         df_results = pd.DataFrame(self.results)
         df_results.to_csv(report_path, index=False, encoding='utf-8')

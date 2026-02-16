@@ -162,6 +162,8 @@ class PDFGenerator:
 
 if __name__ == "__main__":
     # Ejemplo de uso
+    import tempfile
+    
     generator = PDFGenerator()
     
     sample_data = {
@@ -174,8 +176,9 @@ if __name__ == "__main__":
     
     pdf_content = generator.generate_personalized_pdf(sample_data)
     
-    # Guardar PDF de prueba
-    with open('/tmp/test_pdf.pdf', 'wb') as f:
+    # Guardar PDF de prueba en directorio temporal multiplataforma
+    with tempfile.NamedTemporaryFile(mode='wb', suffix='.pdf', delete=False) as f:
         f.write(pdf_content)
+        temp_path = f.name
     
-    print(f"PDF de prueba generado: /tmp/test_pdf.pdf ({len(pdf_content)} bytes)")
+    print(f"PDF de prueba generado: {temp_path} ({len(pdf_content)} bytes)")
